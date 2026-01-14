@@ -50,42 +50,59 @@ for nome_arquivo in arquivos_pdf:
         ]
         nome_extraido = None
 
-        for i, linha in enumerate(linhas):
-            if "Favorecido:" in linha:
-                # O nome está na linha ANTERIOR (i-1)
-                if i - 1 >= 0:
-                    nome_candidato = linhas[i - 1]
-                    # Verificação básica
-                    # separa subcondições para manter as linhas curtas
-                    sem_digitos = not any(
-                        char.isdigit() for char in nome_candidato
-                    )
-                    tem_tamanho = len(nome_candidato) > 5
-                    if (len(nome_candidato) > 5
-                            and sem_digitos
-                            and "CNPJ" not in nome_candidato
-                            and "CPF" not in nome_candidato):
-                        nome_extraido = nome_candidato
-                        print(
-                            f"✅ NOME ENCONTRADO: {nome_extraido}"
-                        )
-                        break
+        # IDENTIFICAÇÃO POR CONTEÚDO ESPECÍFICO
+        # Primeiro verifica se é um PDF de Folha (contém "Pagamento de Folha" na linha 2)
+        if len(linhas) > 1 and "Pagamento de Folha" in linhas[1]:
+            # É um PDF de Folha - pega nome da linha 7
+            if len(linhas) > 6:
+                nome_extraido = linhas[6].replace("Nome:", "").strip()
+                print(f"✅ NOME ENCONTRADO (Folha - linha 7): {nome_extraido}")
 
-        # Fallback: Procura pela linha antes do CPF
-        if not nome_extraido:
+        # Se não é Folha, verifica se é PIX (contém "PIX" na linha 2)
+        elif len(linhas) > 1 and "PIX" in linhas[1]:
+            # É um PDF PIX - pega nome da linha 9
+            if len(linhas) > 8:
+                nome_extraido = linhas[8].replace("Favorecido:", "").strip()
+                print(f"✅ NOME ENCONTRADO (PIX - linha 9): {nome_extraido}")
+
+        # Se não identificou pelos padrões acima, usa a lógica original
+        else:
+            print(f"⚠️  Usando lógica original para: {nome_arquivo}")
             for i, linha in enumerate(linhas):
-                if "CPF:" in linha and i - 1 >= 0:
-                    nome_candidato = linhas[i - 1]
-                    if (len(nome_candidato) > 5 and
-                            not any(
-                                char.isdigit() for char in nome_candidato
-                            )):
-                        nome_extraido = nome_candidato
-                        print(
-                            f"✅ Nome encontrado (antes do CPF): "
-                            f"{nome_extraido}"
+                if "Favorecido:" in linha:
+                    # O nome está na linha ANTERIOR (i-1)
+                    if i - 1 >= 0:
+                        nome_candidato = linhas[i - 1]
+                        # Verificação básica
+                        sem_digitos = not any(
+                            char.isdigit() for char in nome_candidato
                         )
-                        break
+                        tem_tamanho = len(nome_candidato) > 5
+                        if (len(nome_candidato) > 5
+                                and sem_digitos
+                                and "CNPJ" not in nome_candidato
+                                and "CPF" not in nome_candidato):
+                            nome_extraido = nome_candidato
+                            print(
+                                f"✅ NOME ENCONTRADO: {nome_extraido}"
+                            )
+                            break
+
+            # Fallback: Procura pela linha antes do CPF
+            if not nome_extraido:
+                for i, linha in enumerate(linhas):
+                    if "CPF:" in linha and i - 1 >= 0:
+                        nome_candidato = linhas[i - 1]
+                        if (len(nome_candidato) > 5 and
+                                not any(
+                                    char.isdigit() for char in nome_candidato
+                                )):
+                            nome_extraido = nome_candidato
+                            print(
+                                f"✅ Nome encontrado (antes do CPF): "
+                                f"{nome_extraido}"
+                            )
+                            break
 
         if nome_extraido:
             # Limpeza do nome
@@ -115,16 +132,9 @@ for nome_arquivo in arquivos_pdf:
         else:
             print(f"❌ NÃO ENCONTRADO: {nome_arquivo}")
             # Debug das linhas relevantes
-            for i, linha in enumerate(linhas):
-                if any(
-                    palavra in linha
-                    for palavra in [
-                        'Favorecido',
-                        'CPF:',
-                        'Empresa:',
-                    ]
-                ):
-                    print(f"  {i}: {linha}")
+            print("  Primeiras 15 linhas para análise:")
+            for i, linha in enumerate(linhas[:15]):
+                print(f"    Linha {i+1}: {linha}")
 
         print("-" * 50)
 
