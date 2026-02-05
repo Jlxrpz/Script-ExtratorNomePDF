@@ -51,7 +51,8 @@ for nome_arquivo in arquivos_pdf:
         nome_extraido = None
 
         # IDENTIFICAÇÃO POR CONTEÚDO ESPECÍFICO
-        # Primeiro verifica se é um PDF de Folha (contém "Pagamento de Folha" na linha 2)
+        # Primeiro verifica se é um PDF de Folha
+        # (contém "Pagamento de Folha" na linha 2)
         if len(linhas) > 1 and "Pagamento de Folha" in linhas[1]:
             # É um PDF de Folha - pega nome da linha 7
             if len(linhas) > 6:
