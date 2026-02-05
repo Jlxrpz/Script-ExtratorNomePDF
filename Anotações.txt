@@ -1,0 +1,7 @@
+Pix:
+PDF 02:PIX
+Linha 09:Nome: CLAUDEMIR DA SILVA MENDES
+
+Folha:
+PDF 02:Pagamento de Folha
+Linha 07:Favorecido: ARLINDO HUMBERTO DA CRUZ

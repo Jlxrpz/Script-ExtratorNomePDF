@@ -34,5 +34,5 @@ def ler_pdf_linha_por_linha(caminho_pdf):
 
 
 # USO DIRETO - APONTE PARA SEU PDF
-caminho_do_pdf = r"C:\Dev\Script-ExtratorNomePDF\pdf_teste\seu_arquivo.pdf"
+caminho_do_pdf = r"C:\Dev\Script-ExtratorNomePDF\pdf_teste\FOLHA.pdf"
 ler_pdf_linha_por_linha(caminho_do_pdf)
